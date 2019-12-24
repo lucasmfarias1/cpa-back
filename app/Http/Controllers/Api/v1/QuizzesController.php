@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Quiz;
+use App\Question;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QuizRequest;
+use App\Repositories\QuizRepository;
 
 class QuizzesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $quizzes = Quiz::all();
@@ -20,37 +18,18 @@ class QuizzesController extends Controller
         return response()->json(['quizzes' => $quizzes], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(QuizRequest $request)
     {
-        $quiz = Quiz::create($request->all());
+        $quiz = QuizRepository::create($request);
 
         return response()->json(['quiz' => $quiz], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
     public function show(Quiz $quiz)
     {
-        //
+        return response()->json(['quiz' => $quiz], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Quiz $quiz)
     {
         $quiz->update($request->all());
@@ -58,14 +37,10 @@ class QuizzesController extends Controller
         return response()->json(['quiz', $quiz], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Quiz  $quiz
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Quiz $quiz)
     {
-        //
+        QuizRepository::delete($quiz);
+
+        return response()->json(['message' => 'Quiz deleted'], 200);
     }
 }
