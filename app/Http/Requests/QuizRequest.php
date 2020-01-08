@@ -24,8 +24,16 @@ class QuizRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'max:255'],
-            'questions.*.body' => ['required', 'max:255']
+            'name' => ['required', 'max:191'],
+            'questions.*.body' => ['required', 'max:191']
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'O campo nome é obrigatório.',
+            'questions.*.body.required'  => 'O corpo da questão não pode ser vazio.',
         ];
     }
 }

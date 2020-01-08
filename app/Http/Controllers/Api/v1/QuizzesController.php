@@ -14,14 +14,15 @@ class QuizzesController extends Controller
     public function index()
     {
         $request = request()->all();
-        // TODO
-        // $itemsPerPage =
-        if ($request['mustSort']) {
-            $quizzes = Quiz::paginate($request['itemsPerPage']);
-        } else {
-            $quizzes = Quiz::orderBy($request['sortBy'][0])
-                ->paginate($request['itemsPerPage']);
-        }
+        $sortBy = array_key_exists('sortBy', $request) ?
+            $request['sortBy'][0] :
+            'name';
+        $sortDesc = array_key_exists('sortDesc', $request) ?
+            $request['sortDesc'][0] == 'true' ? 'DESC' : 'ASC' :
+            'DESC';
+
+        $quizzes = Quiz::orderBy($sortBy, $sortDesc)
+            ->paginate($request['itemsPerPage']);
 
         return response()->json(['quizzes' => $quizzes], 200);
     }

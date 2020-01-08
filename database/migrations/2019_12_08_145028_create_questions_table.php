@@ -17,7 +17,7 @@ class CreateQuestionsTable extends Migration
             $table->bigIncrements('id');
 
             $table->unsignedBigInteger('quiz_id');
-            $table->string('body');
+            $table->string('body', 191);
 
             $table->timestamps();
         });
