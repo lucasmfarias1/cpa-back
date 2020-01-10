@@ -25,6 +25,7 @@ class QuizRequest extends FormRequest
     {
         return [
             'name' => ['required', 'max:191'],
+            'questions' => ['required', 'array'],
             'questions.*.body' => ['required', 'max:191']
         ];
     }

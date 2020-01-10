@@ -13,7 +13,7 @@ class QuizRepository
         DB::beginTransaction();
 
         try {
-            $quiz = Quiz::create($request->all());
+            $quiz = Quiz::create($request->validated());
 
             foreach ($request->input('questions') as $question) {
                 Question::create([
@@ -26,6 +26,28 @@ class QuizRepository
             return $quiz;
         } catch (\Throwable $th) {
             DB::rollback();
+            throw $th;
+        }
+    }
+
+    public static function update($request, $quiz)
+    {
+        DB::beginTransaction();
+
+        try {
+            $quiz->update($request->validated());
+            $quiz->questions()->delete();
+            foreach ($request->input('questions') as $question) {
+                $quiz->questions()->create([
+                    "body" => $question['body']
+                ]);
+            }
+
+            DB::commit();
+            return $quiz;
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
         }
     }
 

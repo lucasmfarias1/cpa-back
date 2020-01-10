@@ -39,11 +39,11 @@ class QuizzesController extends Controller
         return response()->json(['quiz' => $quiz], 200);
     }
 
-    public function update(Request $request, Quiz $quiz)
+    public function update(QuizRequest $request, Quiz $quiz)
     {
-        $quiz->update($request->all());
+        $quiz = QuizRepository::update($request, $quiz);
 
-        return response()->json(['quiz', $quiz], 200);
+        return response()->json(['quiz' => $quiz], 200);
     }
 
     public function destroy(Quiz $quiz)
