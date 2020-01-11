@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\User;
 
 class AuthController extends Controller
 {
@@ -18,15 +19,30 @@ class AuthController extends Controller
         // $user = new \App\User;
         // $user->name = 'Manzano';
         // $user->email = 'test@test';
+        // $user->ra = '123';
+        // $user->cpf = '425';
         // $user->password = bcrypt('123456');
         // $user->save();
-        $credentials = $request->only('email', 'password');
+
+        $request->validate([
+            'ra'  => 'required',
+            'cpf' => 'required'
+        ]);
+
+        $credentials = $request->only('ra', 'cpf');
+        $user = User::where('ra', $credentials['ra'])->first();
+
+        if ($user && $user->cpf === $credentials['cpf']) {
+            $token = $this->guard()->login($user);
+            return $this->respondWithToken($token);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
         if ($token = $this->guard()->attempt($credentials)) {
             return $this->respondWithToken($token);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
     }
 
     public function me()
