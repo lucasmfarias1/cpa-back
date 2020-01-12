@@ -17,14 +17,21 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
+// v1 API
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'auth'
-], function ($router) {
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+    'prefix' => 'v1'
+], function($router) {
+    Route::group([
+        'prefix' => 'auth'
+    ], function($router) {
+        Route::post('login', 'Api\v1\AuthController@login');
+        Route::post('logout', 'Api\v1\AuthController@logout');
+        Route::post('refresh', 'Api\v1\AuthController@refresh');
+        Route::post('me', 'Api\v1\AuthController@me');
+    });
+
+    // Quizzes
+    Route::resource('quizzes', 'Api\v1\QuizzesController');
 });
 
-Route::resource('/v1/quizzes', 'Api\v1\QuizzesController');

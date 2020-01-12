@@ -11,9 +11,17 @@ use App\Repositories\QuizRepository;
 
 class QuizzesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     public function index()
     {
         $request = request()->all();
+        $itemsPerPage = array_key_exists('itemsPerPage', $request) ?
+            $request['itemsPerPage'] :
+            '10';
         $sortBy = array_key_exists('sortBy', $request) ?
             $request['sortBy'][0] :
             'name';
@@ -22,7 +30,7 @@ class QuizzesController extends Controller
             'DESC';
 
         $quizzes = Quiz::orderBy($sortBy, $sortDesc)
-            ->paginate($request['itemsPerPage']);
+            ->paginate($itemsPerPage);
 
         return response()->json(['quizzes' => $quizzes], 200);
     }
