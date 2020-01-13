@@ -17,7 +17,8 @@ class CreateQuizzesTable extends Migration
             $table->bigIncrements('id');
 
             $table->string('name', 191);
-            $table->boolean('active')->default(false);
+            $table->unsignedInteger('status')->default(0);
+            $table->date('deadline')->nullable();
 
             $table->timestamps();
         });

@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model
 {
-    protected $fillable = ['name', 'deadline', 'active'];
+    protected $fillable = ['name', 'deadline', 'status'];
     protected $appends = ['question_count'];
+
+    const STATUS_LIST = ['pendente', 'ativo', 'finalizado'];
 
     public function questions()
     {
@@ -17,5 +19,10 @@ class Quiz extends Model
     public function getQuestionCountAttribute()
     {
         return $this->questions->count();
+    }
+
+    public function getStatusAttribute()
+    {
+        return self::STATUS_LIST[$this->status];
     }
 }

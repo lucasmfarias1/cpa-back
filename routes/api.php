@@ -31,6 +31,9 @@ Route::group([
         Route::post('me', 'Api\v1\AuthController@me');
     });
 
+    // Home
+    Route::get('active-quizzes', 'Api\v1\HomeController@index');
+
     // Quizzes
     Route::resource('quizzes', 'Api\v1\QuizzesController');
 });

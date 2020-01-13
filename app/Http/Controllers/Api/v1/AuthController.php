@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -16,33 +17,45 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // $user = new \App\User;
-        // $user->name = 'Manzano';
-        // $user->email = 'test@test';
-        // $user->ra = '123';
-        // $user->cpf = '425';
-        // $user->password = bcrypt('123456');
-        // $user->save();
-
         $request->validate([
-            'ra'  => 'required',
             'cpf' => 'required'
         ]);
 
-        $credentials = $request->only('ra', 'cpf');
-        $user = User::where('ra', $credentials['ra'])->first();
+        $credentials = $request->only('cpf');
+        $user = User::where('cpf', $credentials['cpf'])->first();
 
-        if ($user && $user->cpf === $credentials['cpf']) {
+        if ($user) {
             $token = $this->guard()->login($user);
             return $this->respondWithToken($token);
         } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request(
+                'GET',
+                "https://fatecrl.edu.br/std/alunos/{$credentials['cpf']}"
+            );
+            $response = $response->getBody()->getContents();
+            $legacyUser = json_decode($response)[0];
 
-        if ($token = $this->guard()->attempt($credentials)) {
-            return $this->respondWithToken($token);
-        }
+            if ($legacyUser->cd_Cpf) {
+                $newUser = User::create([
+                    'name' => $legacyUser->nm_Usuario,
+                    'cpf' => $legacyUser->cd_Cpf,
+                    'email' => $legacyUser->ds_Email,
+                    'birthdate' => $legacyUser->dt_Nascimento,
+                    'course' => $legacyUser->sg_Curso,
+                    'id_legacy' => $legacyUser->cd_Usuario,
+                    'password' => bcrypt(Str::random(10))
+                ]);
 
+                $token = $this->guard()->login($newUser);
+                return $this->respondWithToken($token);
+            } else {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }
+        // if ($token = $this->guard()->attempt($credentials)) {
+        //     return $this->respondWithToken($token);
+        // }
     }
 
     public function me()
