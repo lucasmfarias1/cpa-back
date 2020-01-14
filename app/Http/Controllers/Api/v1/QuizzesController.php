@@ -60,4 +60,36 @@ class QuizzesController extends Controller
 
         return response()->json(['message' => 'Quiz deleted'], 200);
     }
+
+    public function activate(QuizActivateRequest $request, Quiz $quiz)
+    {
+        if ($quiz->status != 0) {
+            return response()->json(
+                ['error' => 'Forbidden, quiz status must be 0 (pendente)'],
+                403
+            );
+        }
+
+        $quiz->update(['status' => 1]);
+        return response()->json([
+            'quiz' => $quiz,
+            'message' => "Quiz #{$quiz->id} activated"
+        ], 200);
+    }
+
+    public function finish(Quiz $quiz)
+    {
+        if ($quiz->status != 1) {
+            return response()->json(
+                ['error' => 'Forbidden, quiz status must be 1 (ativo)'],
+                403
+            );
+        }
+
+        $quiz->update(['status' => 2]);
+        return response()->json([
+            'quiz' => $quiz,
+            'message' => "Quiz #{$quiz->id} finished"
+        ], 200);
+    }
 }
