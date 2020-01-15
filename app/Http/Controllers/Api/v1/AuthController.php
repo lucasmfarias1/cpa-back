@@ -34,9 +34,11 @@ class AuthController extends Controller
                 "https://fatecrl.edu.br/std/alunos/{$credentials['cpf']}"
             );
             $response = $response->getBody()->getContents();
-            $legacyUser = json_decode($response)[0];
+            $response = json_decode($response);
 
-            if ($legacyUser->cd_Cpf) {
+            if (array_key_exists(0, $response)) $legacyUser = $response[0];
+
+            if (isset($legacyUser) && $legacyUser->cd_Cpf) {
                 $newUser = User::create([
                     'name' => $legacyUser->nm_Usuario,
                     'cpf' => $legacyUser->cd_Cpf,
