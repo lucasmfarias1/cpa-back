@@ -13,7 +13,9 @@ class QuizRepository
         DB::beginTransaction();
 
         try {
-            $quiz = Quiz::create($request->validated());
+            $quiz = new Quiz($request->validated());
+            $quiz->status = 0;
+            $quiz->save();
 
             foreach ($request->input('questions') as $question) {
                 Question::create([
