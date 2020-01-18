@@ -7,6 +7,7 @@ use App\Question;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QuizRequest;
+use App\Http\Requests\QuizActivateRequest;
 use App\Repositories\QuizRepository;
 
 class QuizzesController extends Controller
@@ -65,12 +66,21 @@ class QuizzesController extends Controller
     {
         if ($quiz->status != 0) {
             return response()->json(
-                ['error' => 'Forbidden, quiz status must be 0 (pendente)'],
+                [
+                    'errors' => [
+                        'status' => [
+                            'Forbidden, quiz status must be 0 (pendente)'
+                        ]
+                    ]
+                ],
                 403
             );
         }
 
-        $quiz->update(['status' => 1]);
+        $quiz->update([
+            'status'   => 1,
+            'deadline' => $request->input('deadline')
+        ]);
         return response()->json([
             'quiz' => $quiz,
             'message' => "Quiz #{$quiz->id} activated"
@@ -81,7 +91,13 @@ class QuizzesController extends Controller
     {
         if ($quiz->status != 1) {
             return response()->json(
-                ['error' => 'Forbidden, quiz status must be 1 (ativo)'],
+                [
+                    'errors' => [
+                        'status' => [
+                            'Forbidden, quiz status must be 1 (ativo)'
+                        ]
+                    ]
+                ],
                 403
             );
         }

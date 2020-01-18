@@ -36,5 +36,6 @@ Route::group([
 
     // Quizzes
     Route::resource('quizzes', 'Api\v1\QuizzesController');
+    Route::post('quizzes/{quiz}/activate', 'Api\v1\QuizzesController@activate');
 });
 

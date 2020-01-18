@@ -27,4 +27,13 @@ class QuizActivateRequest extends FormRequest
             'deadline' => ['required', 'date', 'after:tomorrow']
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'deadline.required' => 'Selecione uma data limite.',
+            'deadline.after' =>
+                'A data limite precisa ser no mínimo depois de amanhã.',
+        ];
+    }
 }
