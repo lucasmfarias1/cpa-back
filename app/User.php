@@ -42,4 +42,13 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    // UNTESTED
+    public function answeredQuiz($quizId)
+    {
+        return UserQuizAnswered::where([
+            'user_id' => $this->id,
+            'quiz_id' => $quizId
+        ])->exists();
+    }
 }

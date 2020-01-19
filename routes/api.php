@@ -37,5 +37,12 @@ Route::group([
     // Quizzes
     Route::resource('quizzes', 'Api\v1\QuizzesController');
     Route::post('quizzes/{quiz}/activate', 'Api\v1\QuizzesController@activate');
+
+    // AnswerCards
+    Route::get(
+        'quizzes/{quiz}/answers/create',
+        'Api\v1\AnswerCardsController@create'
+    );
+    Route::post('quizzes/{quiz}/answers', 'Api\v1\AnswerCardsController@store');
 });
 
