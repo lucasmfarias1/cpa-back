@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Course;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -39,12 +40,14 @@ class AuthController extends Controller
             if (array_key_exists(0, $response)) $legacyUser = $response[0];
 
             if (isset($legacyUser) && $legacyUser->cd_Cpf) {
+                $course = Course::where('shorthand', $legacyUser->sg_Curso)
+                    ->first();
                 $newUser = User::create([
                     'name' => $legacyUser->nm_Usuario,
                     'cpf' => $legacyUser->cd_Cpf,
                     'email' => $legacyUser->ds_Email,
                     'birthdate' => $legacyUser->dt_Nascimento,
-                    'course' => $legacyUser->sg_Curso,
+                    'course_id' => $course->id,
                     'id_legacy' => $legacyUser->cd_Usuario,
                     'password' => bcrypt(Str::random(10))
                 ]);
@@ -62,7 +65,7 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json($this->guard()->user());
+        return response()->json($this->guard()->user()->load('course'));
     }
 
     public function logout()
@@ -80,7 +83,7 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'user'         => $this->guard()->user(),
+            'user'         => $this->guard()->user()->load('course'),
             'access_token' => $token,
             'token_type'   => 'bearer',
             'expires_in'   => $this->guard()->factory()->getTTL() * 60

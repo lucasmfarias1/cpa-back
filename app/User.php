@@ -6,13 +6,20 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use carbon\Carbon;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'cpf', 'birthdate', 'course', 'id_legacy'
+        'name',
+        'email',
+        'password',
+        'cpf',
+        'birthdate',
+        'course_id',
+        'id_legacy'
     ];
 
     /**
@@ -33,6 +40,9 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['age'];
+
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -41,6 +51,18 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    // RELATIONSHIPS
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    // ACCESSORS
+    public function getAgeAttribute()
+    {
+        return Carbon::parse($this->birthdate)->age;
     }
 
     // UNTESTED

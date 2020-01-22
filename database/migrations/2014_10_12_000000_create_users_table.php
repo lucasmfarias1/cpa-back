@@ -21,7 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('ra')->unique()->nullable();
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('course')->nullable();
+            $table->integer('course_id')->nullable();
+            $table->integer('term')->nullable();
             $table->date('birthdate')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->unsignedBigInteger('id_legacy')->nullable();
