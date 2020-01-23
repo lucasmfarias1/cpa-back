@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('cpf')->unique();
             $table->string('ra')->unique()->nullable();
             $table->string('email')->unique()->nullable();
+            $table->string('sex')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->integer('course_id')->nullable();
             $table->integer('term')->nullable();

@@ -15,7 +15,7 @@ class AnswerCardRepository
         DB::beginTransaction();
 
         try {
-            $user = Auth::user();
+            $user = Auth::guard()->user();
 
             $answerCard = new AnswerCard();
             $answerCard->quiz_id = $quiz->id;

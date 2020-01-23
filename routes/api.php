@@ -44,5 +44,8 @@ Route::group([
         'Api\v1\AnswerCardsController@create'
     );
     Route::post('quizzes/{quiz}/answers', 'Api\v1\AnswerCardsController@store');
+
+    // Users
+    Route::post('users/{user}', 'Api\v1\UsersController@update');
 });
 
