@@ -5,26 +5,17 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class CheckUserAnsweredQuiz
+class CheckUserHasCompletedProfile
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
     public function handle($request, Closure $next)
     {
         $user = Auth::guard()->user();
-        $quiz = $request->quiz;
-        if (!$quiz ||
-            $user->answeredQuiz($quiz->id)) {
+        if (!$user->has_completed_profile) {
             return response()->json(
                 [
                     'errors' => [
                         'status' => [
-                            'Forbidden, the user has already answered this quiz'
+                            'Forbidden, user must have a completed profile'
                         ]
                     ]
                 ],

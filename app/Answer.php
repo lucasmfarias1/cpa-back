@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Answer extends Model
 {
+    protected $guarded = [];
+
     public function answerCard()
     {
         return $this->belongsTo(AnswerCard::class);

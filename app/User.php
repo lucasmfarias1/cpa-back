@@ -42,8 +42,7 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['age'];
-
+    protected $appends = ['age', 'has_completed_profile'];
 
     public function getJWTIdentifier()
     {
@@ -65,6 +64,16 @@ class User extends Authenticatable implements JWTSubject
     public function getAgeAttribute()
     {
         return Carbon::parse($this->birthdate)->age;
+    }
+
+    public function getHasCompletedProfileAttribute()
+    {
+        return !(
+            is_null($this->term) ||
+            is_null($this->birthdate) ||
+            is_null($this->course_id) ||
+            is_null($this->sex)
+        );
     }
 
     // UNTESTED

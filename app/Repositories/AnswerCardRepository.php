@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Question;
 use App\AnswerCard;
 use App\Answer;
+use App\UserQuizAnswered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,15 +22,16 @@ class AnswerCardRepository
             $answerCard->quiz_id = $quiz->id;
             $answerCard->course_id = $user->course->id;
             $answerCard->term = $user->term;
-            $answerCard->term = $user->age;
+            $answerCard->age = $user->age;
+            $answerCard->sex = $user->sex;
             $answerCard->save();
 
             foreach ($request->input('answers') as $answer) {
-                $question = Question::findOrFail($answer->question_id);
+                $question = Question::findOrFail($answer['question_id']);
                 Answer::create([
                     'answer_card_id' => $answerCard->id,
                     'question_id'    => $question->id,
-                    'value'          => $answer->value
+                    'value'          => $answer['value']
                 ]);
             }
 

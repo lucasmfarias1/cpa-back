@@ -15,6 +15,7 @@ class AnswerCardsController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('check_user_answered_quiz');
+        $this->middleware('check_user_has_completed_profile');
     }
 
     public function index()

@@ -8,6 +8,8 @@ class UserQuizAnswered extends Model
 {
     protected $table = 'user_quiz_answered';
 
+    protected $guarded = [];
+
     public function user()
     {
         return $this->belongsTo(User::class);

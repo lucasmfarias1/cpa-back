@@ -21,6 +21,7 @@ class CreateAnswerCardsTable extends Migration
             $table->unsignedBigInteger('course_id');
             $table->integer('term');
             $table->integer('age');
+            $table->string('sex');
 
             $table->timestamps();
         });

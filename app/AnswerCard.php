@@ -15,4 +15,9 @@ class AnswerCard extends Model
     {
         return $this->belongsTo(Quiz::class);
     }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 }
