@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QuizRequest;
 use App\Http\Requests\QuizActivateRequest;
 use App\Repositories\QuizRepository;
+use Illuminate\Support\Facades\Auth;
 
 class QuizzesController extends Controller
 {
@@ -107,5 +108,20 @@ class QuizzesController extends Controller
             'quiz' => $quiz,
             'message' => "Quiz #{$quiz->id} finished"
         ], 200);
+    }
+
+    public function check(Quiz $quiz)
+    {
+        $canAnswerQuiz = !Auth::guard()->user()->answeredQuiz($quiz->id);
+
+        if ($canAnswerQuiz) {
+            return response()->json([
+                "message" => "This user has not already answered this Quiz"
+            ], 200);
+        } else {
+            return response()->json([
+                "message" => "This user has already answered this Quiz"
+            ], 403);
+        }
     }
 }
