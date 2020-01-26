@@ -14,6 +14,7 @@ class AnswerCardsController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->middleware('check_quiz_available');
         $this->middleware('check_user_answered_quiz');
         $this->middleware('check_user_has_completed_profile');
     }
