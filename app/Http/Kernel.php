@@ -63,7 +63,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check_user_answered_quiz' => \App\Http\Middleware\CheckUserAnsweredQuiz::class,
         'check_user_has_completed_profile' => \App\Http\Middleware\CheckUserHasCompletedProfile::class,
-        'check_quiz_available' => \App\Http\Middleware\CheckQuizAvailable::class
+        'check_quiz_available' => \App\Http\Middleware\CheckQuizAvailable::class,
+        'assure_quiz_pending' => \App\Http\Middleware\AssureQuizPending::class
     ];
 
     /**

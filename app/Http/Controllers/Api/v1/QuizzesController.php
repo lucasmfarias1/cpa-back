@@ -16,6 +16,10 @@ class QuizzesController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->middleware(
+            'assure_quiz_pending',
+            ['only' => ['update', 'destroy']]
+        );
     }
 
     public function index()

@@ -38,6 +38,7 @@ Route::group([
     Route::resource('quizzes', 'Api\v1\QuizzesController');
     Route::post('quizzes/{quiz}/activate', 'Api\v1\QuizzesController@activate');
     Route::get('quizzes/{quiz}/check', 'Api\v1\QuizzesController@check');
+    Route::post('quizzes/{quiz}/finish', 'Api\v1\QuizzesController@finish');
 
     // AnswerCards
     Route::get(
