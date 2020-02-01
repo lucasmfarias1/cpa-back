@@ -11,11 +11,27 @@ class Quiz extends Model
     protected $fillable = ['name', 'deadline', 'status'];
     protected $appends = ['question_count', 'status_text', 'is_available'];
 
-    const STATUS_LIST = ['pendente', 'ativo', 'encerrado'];
+    const STATUS_LIST = ['pendente', 'ativo', 'encerrado', 'arquivado'];
+
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($quiz) {
+             $quiz->questions()->delete();
+             $quiz->answerCards()->delete();
+        });
+    }
+
+    // RELATIONSHIPS
 
     public function questions()
     {
         return $this->hasMany(Question::class);
+    }
+
+    public function answerCards()
+    {
+        return $this->hasMany(AnswerCard::class);
     }
 
     public function getQuestionCountAttribute()

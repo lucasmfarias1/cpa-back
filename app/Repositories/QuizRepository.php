@@ -58,7 +58,6 @@ class QuizRepository
         DB::beginTransaction();
 
         try {
-            $quiz->questions()->delete();
             $quiz->delete();
 
             DB::commit();

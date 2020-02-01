@@ -25,6 +25,10 @@ class QuizzesController extends Controller
     public function index()
     {
         $request = request()->all();
+
+        $archivedOrNot = array_key_exists('archived', $request) ?
+            '=' :
+            '!=';
         $itemsPerPage = array_key_exists('itemsPerPage', $request) ?
             $request['itemsPerPage'] :
             '10';
@@ -36,6 +40,7 @@ class QuizzesController extends Controller
             'DESC';
 
         $quizzes = Quiz::orderBy($sortBy, $sortDesc)
+            ->where('status', $archivedOrNot, 3)
             ->paginate($itemsPerPage);
 
         return response()->json(['quizzes' => $quizzes], 200);
@@ -127,5 +132,29 @@ class QuizzesController extends Controller
                 "message" => "This user has already answered this Quiz"
             ], 403);
         }
+    }
+
+    public function archive(Quiz $quiz)
+    {
+        if ($quiz->status != 2 && $quiz->status != 3) {
+            return response()->json(
+                [
+                    'errors' => [
+                        'status' => [
+                            'Forbidden, quiz status must be 2 (encerrado) or 3 (arquivado)'
+                        ]
+                    ]
+                ],
+                403
+            );
+        }
+
+        $quiz->status == 2 ?
+            $quiz->update(['status' => 3]) :
+            $quiz->update(['status' => 2]);
+        return response()->json([
+            'quiz' => $quiz,
+            'message' => "Quiz #{$quiz->id} archived"
+        ], 200);
     }
 }
