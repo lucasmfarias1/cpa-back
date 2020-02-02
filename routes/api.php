@@ -40,6 +40,7 @@ Route::group([
     Route::get('quizzes/{quiz}/check', 'Api\v1\QuizzesController@check');
     Route::post('quizzes/{quiz}/finish', 'Api\v1\QuizzesController@finish');
     Route::post('quizzes/{quiz}/archive', 'Api\v1\QuizzesController@archive');
+    Route::post('quizzes/{quiz}/results', 'Api\v1\QuizzesController@results');
 
     // AnswerCards
     Route::get(

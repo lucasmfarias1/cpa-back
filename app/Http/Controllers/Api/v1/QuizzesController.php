@@ -157,4 +157,27 @@ class QuizzesController extends Controller
             'message' => "Quiz #{$quiz->id} archived"
         ], 200);
     }
+
+    public function results(Request $request, Quiz $quiz)
+    {
+        if ($quiz->status != 2 && $quiz->status != 3) {
+            return response()->json(
+                [
+                    'errors' => [
+                        'status' => [
+                            'Forbidden, quiz status must be 2 (encerrado) or 3 (arquivado)'
+                        ]
+                    ]
+                ],
+                403
+            );
+        }
+
+        $quizResults = QuizRepository::results($request, $quiz);
+
+        return response()->json([
+            'quiz'    => $quiz,
+            'results' => $quizResults
+        ], 200);
+    }
 }

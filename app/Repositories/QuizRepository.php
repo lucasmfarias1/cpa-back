@@ -67,4 +67,43 @@ class QuizRepository
             throw $th;
         }
     }
+
+    public static function results($request, $quiz)
+    {
+        DB::beginTransaction();
+
+        try {
+            $answerCount = $quiz->answerCards->count();
+
+            $quizResults = $quiz->questions->map(function($question) use ($answerCount) {
+                return [
+                    "questionId" => $question->id,
+                    "questionBody" => $question->body,
+                    "questionResults" => [
+                        "disagree" => $question->answers->where('value', 1)->count() / $answerCount,
+                        "disagree_partial" => $question->answers->where('value', 2)->count() / $answerCount,
+                        "neutral" => $question->answers->where('value', 3)->count() / $answerCount,
+                        "agree_partial" => $question->answers->where('value', 4)->count() / $answerCount,
+                        "agree" => $question->answers->where('value', 5)->count() / $answerCount
+                    ]
+                ];
+            });
+
+            DB::commit();
+            return $quizResults;
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
+        }
+    }
 }
+
+
+// {
+//     name: "Questão asdqwf dwqkjd dw wdqjwifw wjd dw.",
+//     "concordam": "14%",
+//     "concordam parcialmente": "14%",
+//     "neutros": "14%",
+//     "discordam parcialmente": "14%",
+//     "discordam": "14%",
+// },
