@@ -51,5 +51,8 @@ Route::group([
 
     // Users
     Route::post('users/{user}', 'Api\v1\UsersController@update');
+
+    // Admins
+    Route::post('admins', 'Api\v1\AdminsController@store');
 });
 

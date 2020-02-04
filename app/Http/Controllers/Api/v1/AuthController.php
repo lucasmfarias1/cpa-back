@@ -18,14 +18,22 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Check if Admin login
+        if ($request->has('cpf') && $request->has('password')) {
+            return $this->adminLogin($request);
+        }
+
         $request->validate([
-            'cpf' => 'required'
+            'cpf' => ['required', 'string', 'size:11']
         ]);
 
         $credentials = $request->only('cpf');
         $user = User::where('cpf', $credentials['cpf'])->first();
 
         if ($user) {
+            if ($user->is_admin) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
             $token = $this->guard()->login($user);
             return $this->respondWithToken($token);
         } else {
@@ -63,6 +71,21 @@ class AuthController extends Controller
         // }
     }
 
+    private function adminLogin($request)
+    {
+        $request->validate([
+            'cpf' => ['required', 'string', 'size:11'],
+            'password' => ['required', 'string', 'min:4', 'max:100']
+        ]);
+
+        $credentials = $request->only(['cpf', 'password']);
+        if ($token = $this->guard()->attempt($credentials)) {
+            return $this->respondWithToken($token);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    }
+
     public function me()
     {
         return response()->json($this->guard()->user()->load('course'));
@@ -93,5 +116,11 @@ class AuthController extends Controller
     public function guard()
     {
         return Auth::guard();
+    }
+
+    protected function credentials(Request $request)
+    {
+        return $request->only($this->cpf(), 'password')
+            + ['active' => true];
     }
 }
