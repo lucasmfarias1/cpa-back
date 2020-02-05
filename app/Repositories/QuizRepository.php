@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Quiz;
 use App\Question;
+use App\AnswerCard;
 use Illuminate\Support\Facades\DB;
 
 class QuizRepository
@@ -75,6 +76,28 @@ class QuizRepository
         try {
             $answerCount = $quiz->answerCards->count();
 
+            $filters = $request->input('filters');
+            $answerCards = AnswerCard::where('quiz_id', $quiz->id);
+
+            if (array_key_exists('courses', $filters))
+                $answerCards->whereIn('course_id', $filters['courses']);
+
+            if (array_key_exists('terms', $filters))
+                $answerCards->whereIn('term', $filters['terms']);
+
+            if (array_key_exists('sexes', $filters))
+                $answerCards->whereIn('sex', $filters['sexes']);
+
+            if (array_key_exists('max_age', $filters))
+                $answerCards->where('age', '<=', $filters['max_age']);
+
+            if (array_key_exists('min_age', $filters))
+                $answerCards->where('age', '>=', $filters['min_age']);
+
+            $answerCards = $answerCards->get();
+            dd($answerCards);
+            // WIP FROM HERE
+
             $quizResults = $quiz->questions->map(function($question) use ($answerCount) {
                 return [
                     "questionId" => $question->id,
@@ -97,13 +120,3 @@ class QuizRepository
         }
     }
 }
-
-
-// {
-//     name: "Questão asdqwf dwqkjd dw wdqjwifw wjd dw.",
-//     "concordam": "14%",
-//     "concordam parcialmente": "14%",
-//     "neutros": "14%",
-//     "discordam parcialmente": "14%",
-//     "discordam": "14%",
-// },
