@@ -76,38 +76,56 @@ class QuizRepository
         try {
             $answerCount = $quiz->answerCards->count();
 
-            $filters = $request->input('filters');
             $answerCards = AnswerCard::where('quiz_id', $quiz->id);
 
-            if (array_key_exists('courses', $filters))
-                $answerCards->whereIn('course_id', $filters['courses']);
+            if ($request->has('filters')) {
+                $filters = $request->input('filters');
+                if (array_key_exists('courses', $filters)
+                    && !empty($filters['courses']))
+                    $answerCards->whereIn('course_id', $filters['courses']);
 
-            if (array_key_exists('terms', $filters))
-                $answerCards->whereIn('term', $filters['terms']);
+                if (array_key_exists('terms', $filters)
+                    && !empty($filters['terms']))
+                    $answerCards->whereIn('term', $filters['terms']);
 
-            if (array_key_exists('sexes', $filters))
-                $answerCards->whereIn('sex', $filters['sexes']);
+                if (array_key_exists('sexes', $filters)
+                    && !empty($filters['sexes']))
+                    $answerCards->whereIn('sex', $filters['sexes']);
 
-            if (array_key_exists('max_age', $filters))
-                $answerCards->where('age', '<=', $filters['max_age']);
+                if (array_key_exists('max_age', $filters)
+                    && !empty($filters['max_age']))
+                    $answerCards->where('age', '<=', $filters['max_age']);
 
-            if (array_key_exists('min_age', $filters))
-                $answerCards->where('age', '>=', $filters['min_age']);
+                if (array_key_exists('min_age', $filters)
+                    && !empty($filters['min_age']))
+                    $answerCards->where('age', '>=', $filters['min_age']);
+            }
 
             $answerCards = $answerCards->get();
-            dd($answerCards);
-            // WIP FROM HERE
 
-            $quizResults = $quiz->questions->map(function($question) use ($answerCount) {
+            $answers = collect([]);
+            foreach ($answerCards as $answerCard) {
+                $answers = $answers->concat($answerCard->answers);
+            }
+
+            $quizResults = $quiz->questions
+                ->map(function($question) use ($answerCount, $answers) {
+                $relevantAnswers = $answers
+                    ->where('question_id', $question->id);
                 return [
                     "questionId" => $question->id,
                     "questionBody" => $question->body,
                     "questionResults" => [
-                        "disagree" => $question->answers->where('value', 1)->count() / $answerCount,
-                        "disagree_partial" => $question->answers->where('value', 2)->count() / $answerCount,
-                        "neutral" => $question->answers->where('value', 3)->count() / $answerCount,
-                        "agree_partial" => $question->answers->where('value', 4)->count() / $answerCount,
-                        "agree" => $question->answers->where('value', 5)->count() / $answerCount
+                        "disagree" => $relevantAnswers
+                            ->where('value', 1)->count() / $answerCount,
+                        "disagree_partial" => $relevantAnswers
+                            ->where('value', 2)->count() / $answerCount,
+                        "neutral" => $relevantAnswers
+                            ->where('value', 3)->count() / $answerCount,
+                        "agree_partial" => $relevantAnswers
+                            ->where('value', 4)->count() / $answerCount,
+                        "agree" => $relevantAnswers
+                            ->where('value', 5)->count() / $answerCount
                     ]
                 ];
             });

@@ -54,5 +54,8 @@ Route::group([
 
     // Admins
     Route::post('admins', 'Api\v1\AdminsController@store');
+
+    // Courses
+    Route::get('courses', 'Api\v1\CoursesController@index');
 });
 
