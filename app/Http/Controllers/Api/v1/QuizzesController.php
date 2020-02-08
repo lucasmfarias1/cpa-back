@@ -20,6 +20,10 @@ class QuizzesController extends Controller
             'assure_quiz_pending',
             ['only' => ['update', 'destroy']]
         );
+        $this->middleware(
+            'admin_only',
+            ['except' => ['show', 'check']]
+        );
     }
 
     public function index()

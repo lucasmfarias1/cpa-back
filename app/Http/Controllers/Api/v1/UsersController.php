@@ -12,6 +12,7 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->middleware('forbid_admins');
     }
 
     public function update(Request $request, User $user)

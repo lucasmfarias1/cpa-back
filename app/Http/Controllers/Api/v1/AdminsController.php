@@ -13,6 +13,7 @@ class AdminsController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->middleware('admin_only');
     }
 
     public function store(AdminRequest $request)

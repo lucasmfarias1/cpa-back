@@ -64,7 +64,9 @@ class Kernel extends HttpKernel
         'check_user_answered_quiz' => \App\Http\Middleware\CheckUserAnsweredQuiz::class,
         'check_user_has_completed_profile' => \App\Http\Middleware\CheckUserHasCompletedProfile::class,
         'check_quiz_available' => \App\Http\Middleware\CheckQuizAvailable::class,
-        'assure_quiz_pending' => \App\Http\Middleware\AssureQuizPending::class
+        'assure_quiz_pending' => \App\Http\Middleware\AssureQuizPending::class,
+        'admin_only' => \App\Http\Middleware\AdminOnly::class,
+        'forbid_admins' => \App\Http\Middleware\ForbidAdmins::class
     ];
 
     /**
