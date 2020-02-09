@@ -13,11 +13,18 @@ class AdminRequest extends FormRequest
 
     public function rules()
     {
+        $id = $this->route('admin') ? $this->route('admin') : 0;
         return [
             'name' => ['required', 'string', 'min:4', 'max:100'],
-            'cpf' => ['required', 'string', 'size:11', 'unique:users,cpf'],
+            'cpf' => ['required', 'string', 'size:11', "unique:users,cpf,$id"],
             'course_id' => ['required', 'exists:courses,id'],
-            'password' => ['required', 'string', 'min:4', 'max:100']
+            'password' => [
+                'required',
+                'confirmed',
+                'string',
+                'min:4',
+                'max:100'
+            ]
         ];
     }
 }

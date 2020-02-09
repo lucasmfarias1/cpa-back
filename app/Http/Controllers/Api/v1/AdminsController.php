@@ -16,6 +16,27 @@ class AdminsController extends Controller
         $this->middleware('admin_only');
     }
 
+    public function index()
+    {
+        $request = request()->all();
+
+        $itemsPerPage = array_key_exists('itemsPerPage', $request) ?
+            $request['itemsPerPage'] :
+            '10';
+        $sortBy = array_key_exists('sortBy', $request) ?
+            $request['sortBy'][0] :
+            'name';
+        $sortDesc = array_key_exists('sortDesc', $request) ?
+            $request['sortDesc'][0] == 'true' ? 'DESC' : 'ASC' :
+            'DESC';
+
+        $admins = User::orderBy($sortBy, $sortDesc)
+            ->where('is_admin', true)
+            ->paginate($itemsPerPage);
+
+        return response()->json(['admins' => $admins], 200);
+    }
+
     public function store(AdminRequest $request)
     {
         $admin = new User($request->validated());
@@ -24,7 +45,13 @@ class AdminsController extends Controller
         $admin->save();
 
         return response()->json([
-            'message' => 'Admin account created successfully'
+            'message' => 'Admin account created successfully',
+            'admin' => $admin
         ], 200);
+    }
+
+    public function show(User $admin)
+    {
+        return response()->json(['admin' => $admin], 200);
     }
 }

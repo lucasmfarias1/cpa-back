@@ -53,7 +53,7 @@ Route::group([
     Route::post('users/{user}', 'Api\v1\UsersController@update');
 
     // Admins
-    Route::post('admins', 'Api\v1\AdminsController@store');
+    Route::resource('admins', 'Api\v1\AdminsController');
 
     // Courses
     Route::get('courses', 'Api\v1\CoursesController@index');
