@@ -16,6 +16,7 @@ class QuizzesController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->middleware('forbid_admins', ['only' => 'check']);
         $this->middleware(
             'assure_quiz_pending',
             ['only' => ['update', 'destroy']]

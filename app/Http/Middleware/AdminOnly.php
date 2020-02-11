@@ -10,7 +10,9 @@ class AdminOnly
     public function handle($request, Closure $next)
     {
         $user = Auth::guard()->user();
-        if (!$user->is_admin) {
+        $isAdminOrNull = $request->admin ? $request->admin->is_admin : true;
+
+        if (!$user->is_admin || !$isAdminOrNull) {
             return response()->json(
                 [
                     'errors' => [

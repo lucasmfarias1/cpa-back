@@ -54,4 +54,27 @@ class AdminsController extends Controller
     {
         return response()->json(['admin' => $admin], 200);
     }
+
+    public function update(AdminRequest $request, User $admin)
+    {
+        $attributes = $request->validated();
+        if ($request->has('password'))
+            $attributes['password'] = bcrypt($attributes['password']);
+
+        $admin->update($attributes);
+
+        return response()->json([
+            'message' => 'Admin account updated successfully',
+            'admin' => $admin
+        ], 200);
+    }
+
+    public function destroy(User $admin)
+    {
+        $admin->delete();
+
+        return response()->json([
+            'message' => 'Admin account deleted successfully'
+        ], 200);
+    }
 }
