@@ -14,6 +14,7 @@ class AdminsController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('admin_only');
+        $this->middleware('master_only');
     }
 
     public function index()
@@ -71,6 +72,12 @@ class AdminsController extends Controller
 
     public function destroy(User $admin)
     {
+        if ($admin->is_master) {
+            return response()->json([
+                'message' => 'Master admin cannot be deleted'
+            ], 403);
+        }
+
         $admin->delete();
 
         return response()->json([

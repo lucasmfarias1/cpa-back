@@ -42,7 +42,7 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['age', 'has_completed_profile'];
+    protected $appends = ['age', 'has_completed_profile', 'is_master'];
 
     public function getJWTIdentifier()
     {
@@ -76,7 +76,11 @@ class User extends Authenticatable implements JWTSubject
         );
     }
 
-    // UNTESTED
+    public function getIsMasterAttribute()
+    {
+        return in_array($this->id, [1]);
+    }
+
     public function answeredQuiz($quizId)
     {
         return UserQuizAnswered::where([
