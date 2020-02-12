@@ -25,6 +25,10 @@ class QuizzesController extends Controller
             'admin_only',
             ['except' => ['show', 'check']]
         );
+        $this->middleware(
+            'admin_course_permission',
+            ['only' => ['update', 'destroy', 'activate', 'finish', 'archive']]
+        );
     }
 
     public function index()

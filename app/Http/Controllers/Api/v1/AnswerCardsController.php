@@ -58,7 +58,6 @@ class AnswerCardsController extends Controller
             );
         }
 
-        // answercard repository to store the validated answercard now
         $answerCard = AnswerCardRepository::create($request, $quiz);
         return response()->json([
                 "message" => "AnswerCard stored successfully"

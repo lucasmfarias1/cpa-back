@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Course;
 
 class QuizRequest extends FormRequest
 {
@@ -25,6 +26,7 @@ class QuizRequest extends FormRequest
     {
         return [
             'name' => ['required', 'max:191'],
+            'course_id' => ['exists:courses,id'],
             'questions' => ['required', 'array'],
             'questions.*.body' => ['required', 'max:191']
         ];

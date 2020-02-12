@@ -8,8 +8,13 @@ use carbon\Carbon;
 
 class Quiz extends Model
 {
-    protected $fillable = ['name', 'deadline', 'status'];
-    protected $appends = ['question_count', 'status_text', 'is_available'];
+    protected $fillable = ['name', 'deadline', 'status', 'course_id'];
+    protected $appends = [
+        'question_count',
+        'status_text',
+        'is_available',
+        'course_name'
+    ];
 
     const STATUS_LIST = ['pendente', 'ativo', 'encerrado', 'arquivado'];
 
@@ -22,8 +27,9 @@ class Quiz extends Model
         });
     }
 
+    //
     // RELATIONSHIPS
-
+    //
     public function questions()
     {
         return $this->hasMany(Question::class);
@@ -32,6 +38,20 @@ class Quiz extends Model
     public function answerCards()
     {
         return $this->hasMany(AnswerCard::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    //
+    // ACCESSORS
+    //
+    public function getCourseNameAttribute()
+    {
+        if ($this->course) return $this->course->shorthand;
+        else return "TODOS";
     }
 
     public function getQuestionCountAttribute()

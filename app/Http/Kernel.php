@@ -67,7 +67,8 @@ class Kernel extends HttpKernel
         'assure_quiz_pending' => \App\Http\Middleware\AssureQuizPending::class,
         'admin_only' => \App\Http\Middleware\AdminOnly::class,
         'forbid_admins' => \App\Http\Middleware\ForbidAdmins::class,
-        'master_only' => \App\Http\Middleware\MasterOnly::class
+        'master_only' => \App\Http\Middleware\MasterOnly::class,
+        'admin_course_permission' => \App\Http\Middleware\AdminCoursePermission::class
     ];
 
     /**

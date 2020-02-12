@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Quiz;
 use App\Question;
 use App\AnswerCard;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class QuizRepository
@@ -14,7 +15,12 @@ class QuizRepository
         DB::beginTransaction();
 
         try {
+            $currentUser = Auth::guard()->user();
             $quiz = new Quiz($request->validated());
+
+            if (!$currentUser->is_master)
+                $quiz->course_id = $currentUser->course->id;
+
             $quiz->status = 0;
             $quiz->save();
 
@@ -38,7 +44,15 @@ class QuizRepository
         DB::beginTransaction();
 
         try {
-            $quiz->update($request->validated());
+            $currentUser = Auth::guard()->user();
+            $quiz->fill($request->validated());
+
+            if (!$request->has('course_id')) $quiz->course_id = null;
+            if (!$currentUser->is_master)
+                $quiz->course_id = $currentUser->course->id;
+
+            $quiz->save();
+
             $quiz->questions()->delete();
             foreach ($request->input('questions') as $question) {
                 $quiz->questions()->create([
