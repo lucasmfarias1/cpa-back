@@ -29,6 +29,7 @@ class QuizzesController extends Controller
             'admin_course_permission',
             ['only' => ['update', 'destroy', 'activate', 'finish', 'archive']]
         );
+        $this->middleware('check_user_can_answer_quiz', ['only' => 'check']);
     }
 
     public function index()

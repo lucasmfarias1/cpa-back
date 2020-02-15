@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class CheckUserAnsweredQuiz
+class CheckUserCanAnswerQuiz
 {
     /**
      * Handle an incoming request.
@@ -19,12 +19,13 @@ class CheckUserAnsweredQuiz
         $user = Auth::guard()->user();
         $quiz = $request->quiz;
         if (!$quiz ||
-            $user->answeredQuiz($quiz->id)) {
+            $user->answeredQuiz($quiz->id) ||
+            $this->courseCheck($user, $quiz)) {
             return response()->json(
                 [
                     'errors' => [
                         'status' => [
-                            'Forbidden, the user has already answered this quiz'
+                            'Forbidden, the user cannot answer this quiz'
                         ]
                     ]
                 ],
@@ -33,5 +34,12 @@ class CheckUserAnsweredQuiz
         }
 
         return $next($request);
+    }
+
+    private function courseCheck($user, $quiz)
+    {
+        return (
+            $quiz->course_name != 'TODOS' &&
+            $quiz->course_id != $user->course->id);
     }
 }

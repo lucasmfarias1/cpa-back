@@ -89,6 +89,7 @@ class QuizRepository
 
         try {
             $answerCount = $quiz->answerCards->count();
+            if ($answerCount == 0) return [];
 
             $answerCards = AnswerCard::where('quiz_id', $quiz->id);
 
@@ -126,20 +127,38 @@ class QuizRepository
                 ->map(function($question) use ($answerCount, $answers) {
                 $relevantAnswers = $answers
                     ->where('question_id', $question->id);
+
+                $relevantAnswerCount = array_map(function($n) use ($relevantAnswers) {
+                    return $relevantAnswers->where('value', $n)->count();
+                }, [1, 2, 3, 4, 5]);
                 return [
                     "questionId" => $question->id,
                     "questionBody" => $question->body,
                     "questionResults" => [
-                        "disagree" => $relevantAnswers
-                            ->where('value', 1)->count() / $answerCount,
-                        "disagree_partial" => $relevantAnswers
-                            ->where('value', 2)->count() / $answerCount,
-                        "neutral" => $relevantAnswers
-                            ->where('value', 3)->count() / $answerCount,
-                        "agree_partial" => $relevantAnswers
-                            ->where('value', 4)->count() / $answerCount,
-                        "agree" => $relevantAnswers
-                            ->where('value', 5)->count() / $answerCount
+                        "disagree" => [
+                            "percent" => $relevantAnswerCount[0] / $answerCount,
+                            "count"   => $relevantAnswerCount[0]
+                        ],
+
+                        "disagree_partial" => [
+                            "percent" => $relevantAnswerCount[1] / $answerCount,
+                            "count"   => $relevantAnswerCount[1]
+                        ],
+
+                        "neutral" => [
+                            "percent" => $relevantAnswerCount[2] / $answerCount,
+                            "count"   => $relevantAnswerCount[2]
+                        ],
+
+                        "agree_partial" => [
+                            "percent" => $relevantAnswerCount[3] / $answerCount,
+                            "count"   => $relevantAnswerCount[3]
+                        ],
+
+                        "agree" => [
+                            "percent" => $relevantAnswerCount[4] / $answerCount,
+                            "count"   => $relevantAnswerCount[4]
+                        ],
                     ]
                 ];
             });

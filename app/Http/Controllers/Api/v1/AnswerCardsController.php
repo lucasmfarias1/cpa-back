@@ -16,7 +16,7 @@ class AnswerCardsController extends Controller
         $this->middleware('auth:api');
         $this->middleware('forbid_admins');
         $this->middleware('check_quiz_available');
-        $this->middleware('check_user_answered_quiz');
+        $this->middleware('check_user_can_answer_quiz');
         $this->middleware('check_user_has_completed_profile');
     }
 
